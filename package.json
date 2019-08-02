@@ -1,0 +1,19 @@
+{
+  "name": "wechat_official_account",
+  "version": "1.0.0",
+  "description": "hucheng1997 blogs",
+  "dependencies": {
+    "ejs": "^2.6.2",
+    "express": "^4.17.1",
+    "mongoose": "^5.6.7",
+    "nanoid": "^2.0.3",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.7",
+    "sha1": "^1.1.1",
+    "xml2js": "^0.4.19"
+  },
+  "devDependencies": {
+    "puppeteer": "^1.19.0",
+    "qiniu": "^7.2.2"
+  }
+}

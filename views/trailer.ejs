@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>电影预告片</title>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://cdn.bootcss.com/dplayer/1.25.0/DPlayer.min.css" rel="stylesheet">
+    <style type="text/css">
+        .container {
+            padding: 0;
+        }
+
+        .navbar-brand {
+            color: #f3f3f3 !important;
+        }
+
+        .btn.my-2.my-sm-0 {
+            color: #ffffff;
+            border-color: #ffffff;
+        }
+
+        .card-title {
+            font-weight: bold;
+        }
+
+        .btn.btn-link {
+            text-decoration: none;
+            color: #212529;
+            padding: 0;
+            margin-left: -.1rem;
+        }
+
+        .card-img-top {
+            width: 60%;
+            height: 60%;
+            margin-left: 20%;
+        }
+
+        .pHeight {
+            height: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav class="navbar justify-content-between navbar-dark bg-dark">
+        <a class="navbar-brand">XXX电影预告片</a>
+        <form class="form-inline">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
+    </nav>
+
+    <div class="pHeight"></div>
+    <div class="row">
+        <div class="col">
+            <div class="card-group">
+                <% trailers.forEach(function (trailer, index) { %>
+                    <div class="card">
+                        <img class="card-img-top" src="<%= qiniuImgUrl %><%= trailer.posterKey %>"
+                             alt="<%= trailer.title %>" data-coverkey="<%= qiniuImgUrl %><%= trailer.coverKey %>"
+                             data-videokey="<%= qiniuImgUrl %><%= trailer.videoKey %>"
+                             data-doubanId="<%= trailer.doubanId %>"/>
+                        <div class="card-body">
+                            <h5 class="card-title"><%= trailer.title %></h5>
+                            <p class="card-text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= trailer.summary %></p>
+                        </div>
+                        <div class="card-header" id="heading<%= index %>">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse<%= index %>"
+                                        aria-expanded="false" aria-controls="collapse<%= index %>">
+                                    点击查看电影详情
+                                </button>
+                            </h5>
+                        </div>
+                        <div id="collapse<%= index %>" class="collapse" aria-labelledby="heading<%= index %>"
+                             data-parent="#accordion">
+                            <div class="card-header">
+                                <ul class="list-group">
+                                    <li class="list-group-item">导演：<%= trailer.directors %></li>
+                                    <li class="list-group-item">主演：
+                                        <%= trailer.casts.join("/") %>
+                                    </li>
+                                    <li class="list-group-item">评分：<%= trailer.rating ? trailer.rating : '暂无评分' %></li>
+                                    <li class="list-group-item">类型： <%= trailer.genreArr.join("/") %></li>
+                                    <li class="list-group-item">
+                                        上映时间：<%= trailer.releaseDate ? trailer.releaseDate : '暂无' %></li>
+                                    <li class="list-group-item">片长：<%= trailer.runtime ? trailer.runtime : '暂无' %></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted"><%= Math.ceil((Date.now() - trailer.createTime) / 86400000) %>
+                                天前更新
+                            </small>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    </div>
+    <div id="myModal" class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div id="dplayer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/dplayer/1.25.0/DPlayer.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+        let dp = null
+        //记录上一次视频
+        let lastVideo = null
+        //模态框消失时触发的事件
+        $('#myModal').on('hidden.bs.modal', function (e) {
+            dp.pause()
+        })
+        $('.card-img-top').click(function () {
+            const cover = $(this).data('coverkey')
+            const video = $(this).data('videokey')
+            const doubanId = $(this).data('doubanid')
+            console.log(doubanId)
+            $('#myModal').modal('show')
+            if (!dp) {
+                //创建播放器对象
+                dp = new DPlayer({
+                    container: document.getElementById('dplayer'),
+                    autoplay: true,
+                    lang: 'zh-cn',
+                    volume: 0.7,
+                    video: {
+                        url: video,
+                        pic: cover,
+                        thumbnails: cover,
+                        type: 'auto'
+                    },
+                    danmaku: {
+                        id: doubanId,
+                        api: `<%= url %>/`,
+                        maximum: 1000,
+                        user: 'DIYgod',
+                        bottom: '15%',
+                        unlimited: true
+                    },
+                    contextmenu: [
+                        {
+                            text: 'custom1',
+                            link: 'https://github.com/DIYgod/DPlayer'
+                        },
+                        {
+                            text: 'custom2',
+                            click: (player) => {
+                                console.log(player);
+                            }
+                        }
+                    ]
+                });
+            } else {
+                if (video === lastVideo) {
+                    dp.play()
+                } else {
+                    //切换到其他视频
+                    dp.switchVideo({
+                        url: video,
+                        pic: cover,
+                        thumbnails: cover
+                    }, {
+                        id: doubanId,
+                        api: `<%= url %>/`,
+                        maximum: 3000,
+                        user: 'DIYgod'
+                    });
+                }
+                lastVideo = video
+            }
+        })
+        /*
+     1. 加载弹幕
+       请求地址： http://4ef314c8.ngrok.io/v3/?id=demo
+       请求方式： GET
+       返回值：json字符串
+       {
+         code: 0,
+         data: [
+           [
+             3.3964,    弹幕发送时间，单位s
+             0,         弹幕类型
+             16777215,  弹幕的颜色
+             "DIYgod",  弹幕发送者
+             "11111"    弹幕内容
+           ],
+           []
+         ]
+       }
+
+     2. 发送弹幕
+       请求地址： http://4ef314c8.ngrok.io/v3/
+       请求方式： POST
+       请求体参数：
+         author	DIYgod   弹幕发送者
+         color	16777215   弹幕的颜色
+         id	demo         弹幕的id
+         text	123456     弹幕的内容
+         time	0          弹幕的发送时间
+         type	0          弹幕的类型
+       响应内容：
+       {
+         "code":0,
+         "data":{
+         "_id":"5b8f32da5f201846fb7d4102",
+         "player":"demo",
+         "author":"DIYgod",
+         "time":0,
+         "text":"12345",
+         "color":16777215,
+         "type":0,
+         "ip":"121.69.81.166",
+         "referer":"http://4ef314c8.ngrok.io/movie",
+         "date":1536111322710,
+         "__v":0
+      }}
+
+    */
+    })
+
+</script>
+</body>
+</html>
