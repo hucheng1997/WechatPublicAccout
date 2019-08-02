@@ -73,15 +73,15 @@ router.get('/v3', async (req, res) => {
 })
 router.get('/search/byName', async (req, res) => {
     const {reqData} = req.query
-    console.log("76"+reqData)
-    const data = await Theaters.find({title: /reqData/}, {_id: 0, image: 0, cover: 0, link: 0, __v: 0})
+    const text=reqData.toString().replace('。', "")
+    const data = await Theaters.find({title: /text/}, {_id: 0, image: 0, cover: 0, link: 0, __v: 0})
 
-    // let resData = []
-    // data.forEach(function (item) {
-    //     resData.push([item.time, item.type, item.color, item.author, item.text])
-    // })
+    let resData = []
+    data.forEach(function (item) {
+        resData.push([item.time, item.type, item.color, item.author, item.text])
+    })
     // //返回相应
-    res.send({code: 0, data})
+    res.send({code: 0, data:resData})
 })
 router.post('/v3', async (req, res) => {
     /*
