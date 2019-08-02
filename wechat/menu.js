@@ -1,10 +1,9 @@
 const {url}=require('../config')
 module.exports = {
-
     "button": [
         {
             "type":"view",
-            "name":"XXX电影🎬",
+            "name":"预告片🎬",
             "url":`${url}/trailer`
         },
         {

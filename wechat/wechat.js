@@ -236,13 +236,13 @@ class Wechat {
 }
 
 
-(async () => {
-    const w = new Wechat()
-    let result = await w.deleteMenu()
-    console.log(result)
-    result = await w.createMenu()
-    console.log(result)
-})()
+// (async () => {
+//     const w = new Wechat()
+//     let result = await w.deleteMenu()
+//     console.log(result)
+//     result = await w.createMenu()
+//     console.log(result)
+// })()
 
 module.exports=Wechat
 

@@ -32,7 +32,6 @@ router.get('/search', async (req, res) => {
         `timestamp=${timestamp}`,
         `url=${url}/search`
     ]
-    console.log(arr)
     const str = arr.sort().join('&');
     const signature = sha1(str);
     res.render('search', {
@@ -72,8 +71,19 @@ router.get('/v3', async (req, res) => {
     //返回相应
     res.send({code: 0, data: resData})
 })
+router.get('/search/byName', async (req, res) => {
+    const {reqData} = req.query
+    console.log("76"+reqData)
+    const data = await Theaters.find({title: /reqData/}, {_id: 0, image: 0, cover: 0, link: 0, __v: 0})
 
-router.post('/v3',  async (req, res) => {
+    // let resData = []
+    // data.forEach(function (item) {
+    //     resData.push([item.time, item.type, item.color, item.author, item.text])
+    // })
+    // //返回相应
+    res.send({code: 0, data})
+})
+router.post('/v3', async (req, res) => {
     /*
     弹幕信息是以流式数据发送过来的
     接受的数据是一个buffer，需要调用toString转换成字符串
@@ -85,7 +95,7 @@ router.post('/v3',  async (req, res) => {
             .on('data', data => {
                 console.log(data)
                 body += data.toString();
-                console.log('body',body)
+                console.log('body', body)
             })
             .on('end', () => {
                 //将json字符串转化成js对象

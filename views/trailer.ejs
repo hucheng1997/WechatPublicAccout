@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>电影预告片</title>
+    <title>XXX电影网</title>
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link href="https://cdn.bootcss.com/dplayer/1.25.0/DPlayer.min.css" rel="stylesheet">
@@ -46,10 +46,8 @@
 <body>
 <div class="container">
     <nav class="navbar justify-content-between navbar-dark bg-dark">
-        <a class="navbar-brand">XXX电影预告片</a>
-        <form class="form-inline">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
+        <a class="navbar-brand">最新最热电影预告片</a>
+
     </nav>
 
     <div class="pHeight"></div>
@@ -58,10 +56,13 @@
             <div class="card-group">
                 <% trailers.forEach(function (trailer, index) { %>
                     <div class="card">
-                        <img class="card-img-top" src="<%= qiniuImgUrl %><%= trailer.posterKey %>"
-                             alt="<%= trailer.title %>" data-coverkey="<%= qiniuImgUrl %><%= trailer.coverKey %>"
+                        <img class="card-img-second"
+                             style="position: absolute;width: 2rem;height: 2rem;margin-left: 45%;margin-top: 35%"
+                             src="<%= qiniuImgUrl %>play.png" data-coverkey="<%= qiniuImgUrl %><%= trailer.coverKey %>"
                              data-videokey="<%= qiniuImgUrl %><%= trailer.videoKey %>"
-                             data-doubanId="<%= trailer.doubanId %>"/>
+                             data-doubanId="<%= trailer.doubanId %>">
+                        <img  class="card-img-top" src="<%= qiniuImgUrl %><%= trailer.posterKey %>"
+                             alt="<%= trailer.title %>" />
                         <div class="card-body">
                             <h5 class="card-title"><%= trailer.title %></h5>
                             <p class="card-text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= trailer.summary %></p>
@@ -128,11 +129,10 @@
         $('#myModal').on('hidden.bs.modal', function (e) {
             dp.pause()
         })
-        $('.card-img-top').click(function () {
+        $('.card-img-second').click(function () {
             const cover = $(this).data('coverkey')
             const video = $(this).data('videokey')
             const doubanId = $(this).data('doubanid')
-            console.log(doubanId)
             $('#myModal').modal('show')
             if (!dp) {
                 //创建播放器对象

@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 
 module.exports = new Promise((resolve, reject) => {
     //连接数据库
-    mongoose.connect('mongodb://localhost:27017/xxx_movie', {useNewUrlParser: true})
+    mongoose.connect('mongodb://47.106.166.70:27017/xxx_movie', {useNewUrlParser: true})
 
     //绑定事件监听
     mongoose.connection.once('open', err => {

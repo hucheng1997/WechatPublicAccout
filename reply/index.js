@@ -46,7 +46,6 @@ module.exports = () => {
             }
              */
             const message = await formatMessage(jsData)
-
             const options = await reply(message)
             let replyMessage = template(options)
             res.send(replyMessage)
